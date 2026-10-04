@@ -37,6 +37,8 @@
 #import "GNUMail+Extensions.h"
 #import "GNUMailBundle.h"
 #import "Constants.h"
+#import "GmailAccountSetup.h"
+#import "GmailOAuth.h"
 #import "MailWindowController.h"
 #import "MailboxInspectorPanelController.h"
 #import "MailboxManagerCache.h"
@@ -1641,6 +1643,15 @@ static BOOL doneInit = NO;
 // This method is used to show the mailbox manager window on the screen.
 // We use a singleton.
 //
+- (IBAction) addGmailAccount: (id) sender
+{
+  [GmailAccountSetup addAccount];
+}
+
+
+//
+//
+//
 - (IBAction) showMailboxManager: (id) sender
 {
   TOGGLE_WINDOW(MailboxManagerController);
@@ -2089,6 +2100,21 @@ static BOOL doneInit = NO;
 - (void) applicationWillFinishLaunching: (NSNotification *) theNotification
 {
   [ApplicationIconController singleInstance];
+
+  // The Gmail sign-in goes right below the application's own entries.
+  [GmailAccountSetup startObservingAccounts];
+  {
+    NSMenu *anApplicationMenu;
+    NSMenuItem *aMenuItem;
+
+    anApplicationMenu = [[[NSApp mainMenu] itemAtIndex: 0] submenu];
+    aMenuItem = [[NSMenuItem alloc] initWithTitle: _(@"Add Gmail Account...")
+					   action: @selector(addGmailAccount:)
+				    keyEquivalent: @""];
+    [aMenuItem setTarget: self];
+    [anApplicationMenu insertItem: aMenuItem  atIndex: 1];
+    RELEASE(aMenuItem);
+  }
 }
 
 
@@ -2436,13 +2462,48 @@ static BOOL doneInit = NO;
     }  
 
   [Utilities restoreOpenFoldersForStore: aLocalStore];
+
+  /* The Inbox window is open when the application has started, whatever was
+     open when it was last quit. A folder that is already open is only
+     brought to the front. */
+  {
+    NSDictionary *mailboxes;
+    NSString *inbox;
+    CWURLName *inboxURLName;
+
+    mailboxes = [[[Utilities allEnabledAccounts] objectForKey: [Utilities defaultAccountName]]
+		  objectForKey: @"MAILBOXES"];
+    inbox = [mailboxes objectForKey: @"INBOXFOLDERNAME"];
+    if (inbox == nil)
+      {
+	inbox = [NSString stringWithFormat: @"local://%@",
+			  [pathToLocalMailDir stringByAppendingPathComponent: @"Inbox"]];
+      }
+
+    inboxURLName = [[CWURLName alloc] initWithString: inbox  path: pathToLocalMailDir];
+    [[MailboxManagerController singleInstance] openFolderWithURLName: inboxURLName  sender: self];
+    RELEASE(inboxURLName);
+  }
   //[self _connectToIMAPServers];
     
   // If we must show the Preferences window, we show it right now. That happens if for example,
   // we started GNUMail for the first time and the user has chosen to configure it.
   if (mustShowPreferencesWindow)
     {
-      [self showPreferencesWindow: nil];
+      // Most people start with Gmail, which needs no settings at all:
+      // one sign-in in the browser sets the whole account up.
+      if (NSRunAlertPanel(_(@"Welcome to GNUMail"),
+			  _(@"Do you want to read your Gmail here?"),
+			  _(@"Add Gmail Account"),
+			  _(@"Other Account..."),
+			  nil) == NSAlertDefaultReturn)
+	{
+	  [self addGmailAccount: nil];
+	}
+      else
+	{
+	  [self showPreferencesWindow: nil];
+	}
     }
 
   // We register our service

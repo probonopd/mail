@@ -1,0 +1,12 @@
+GNUSTEP_INSTALLATION_DOMAIN = SYSTEM
+ADDITIONAL_INCLUDE_DIRS += -I../../Headers
+
+# The sign-in protocol has no part of the application in it; only the
+# Pantomime framework, for the base64 coding.
+t_GmailOAuth_OBJC_FILES += ../../Sources/GmailOAuth.m
+t_GmailOAuth_TOOL_LIBS += -lPantomime
+
+# clang 19 / binutils 2.44: a tool without constant strings of its own has no
+# __objc_constant_string section to take the bounds of.
+ADDITIONAL_LDFLAGS += -Wl,--defsym=__start___objc_constant_string=0 \
+                      -Wl,--defsym=__stop___objc_constant_string=0

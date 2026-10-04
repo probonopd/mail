@@ -23,6 +23,8 @@
 
 #import "Utilities.h"
 
+#import "GmailOAuth.h"
+
 #import "EditWindowController.h"
 #import "ExtendedMenuItem.h"
 #import "ExtendedTextView.h"
@@ -1342,6 +1344,13 @@ static NSMutableDictionary *passwordCache = nil;
       usernameKey = @"SMTP_USERNAME";
       passwordKey = @"SMTP_PASSWORD";
       serverNameKey = @"SMTP_HOST";
+    }
+
+  // A Google account has no password: the server is given an access token.
+  if ([[allValues objectForKey: ((theType == POP3 || theType == IMAP) ? @"AUTH_MECHANISM" : @"SMTP_AUTH_MECHANISM")]
+	isEqualToString: @"XOAUTH2"])
+    {
+      return [GmailOAuth accessTokenForUsername: [allValues objectForKey: usernameKey]];
     }
 
   // We define a new key
