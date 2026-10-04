@@ -58,6 +58,7 @@ APP_NAME = Mail
 Mail_OBJC_FILES = \
 	Sources/GSProgressIndicator.m \
 	Sources/GmailOAuth.m \
+	Sources/MailWindowController+Appearance.m \
 	Sources/GmailAccountSetup.m \
 	Sources/AboutPanelController.m \
 	Sources/AddressBookController.m \

@@ -2813,6 +2813,10 @@ static MailboxManagerController *singleInstance = nil;
   // We set the new folder
   [aMailWindowController setFolder: aFolder];
 
+  // A local folder is parsed inside -folderForName:, before any window shows it,
+  // so the prefetch notification found no window to update.
+  [aMailWindowController updateDataView];
+
   // We we are reusing our window controller, we must always reload the table view
   if (reusingLastMailWindowOnTop && [GNUMail lastMailWindowOnTop])
     {

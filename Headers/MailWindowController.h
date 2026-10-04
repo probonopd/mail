@@ -227,4 +227,14 @@
 
 @end
 
+
+//
+// The look of the window: toolbar and status line (MailWindowController+Appearance.m).
+//
+@interface MailWindowController (Appearance)
+- (void) applyAppearance;
+- (void) layoutAppearance;
+@end
+
+
 #endif // _GNUMail_H_MailWindowController

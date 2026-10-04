@@ -2033,6 +2033,8 @@
 
   // We initialize some ivars
   allMessageViewWindowControllers = [[NSMutableArray alloc] init];
+
+  [self applyAppearance];
 }
 
 
@@ -2107,6 +2109,8 @@
 //
 - (void) windowDidResize: (NSNotification *) theNotification
 {
+ [self layoutAppearance];
+
  if (!showRawSource)
     {
       [self _showMessage: nil];

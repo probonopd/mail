@@ -52,6 +52,29 @@
 }
 
 
+//
+// The rows alternate in colour across the whole width of the list, so that a
+// row can be followed from its first to its last column.
+//
+- (void) drawRow: (NSInteger) theRow  clipRect: (NSRect) theClipRect
+{
+  if (![self isRowSelected: theRow])
+    {
+      NSColor *aColor;
+
+      aColor = [self backgroundColor];
+      if (theRow % 2 == 1)
+	{
+	  aColor = [aColor blendedColorWithFraction: 0.06  ofColor: [NSColor blackColor]];
+	}
+      [aColor set];
+      NSRectFill([self rectOfRow: theRow]);
+    }
+
+  [super drawRow: theRow  clipRect: theClipRect];
+}
+
+
 - (BOOL) acceptsFirstMouse: (NSEvent *) theEvent
 {
   return YES;
