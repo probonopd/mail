@@ -148,6 +148,7 @@ extern NSString* PantomimeTransactionResetFailed;
   @constant SMTP_AUTH_LOGIN LOGIN authentication.
   @constant SMTP_AUTH_LOGIN_CHALLENGE Challenge during the LOGIN authentication.
   @constant SMTP_AUTH_PLAIN PLAIN authentication.
+  @constant SMTP_AUTH_XOAUTH2 XOAUTH2 (OAuth 2.0 bearer token) authentication.
   @constant SMTP_DATA The DATA SMTP command - see 4.1.1.4 DATA (DATA) of RFC 2821.
   @constant SMTP_EHLO The EHLO SMTP command - see 4.1.1.1  Extended HELLO (EHLO) or HELLO (HELO) of RFC 2821.
   @constant SMTP_HELO The HELO SMTP command - see 4.1.1.1  Extended HELLO (EHLO) or HELLO (HELO) of RFC 2821.
@@ -165,6 +166,7 @@ typedef enum {
   SMTP_AUTH_LOGIN,
   SMTP_AUTH_LOGIN_CHALLENGE,
   SMTP_AUTH_PLAIN,
+  SMTP_AUTH_XOAUTH2,
   SMTP_DATA,
   SMTP_EHLO,
   SMTP_HELO,

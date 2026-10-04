@@ -38,6 +38,7 @@
   @discussion This enum lists the supported IMAP commands available in Pantomime's IMAP client code.
   @constant IMAP_APPEND The IMAP APPEND command - see 6.3.11. APPEND Command of RFC 3501. 
   @constant IMAP_AUTHENTICATE_CRAM_MD5 CRAM-MD5 authentication.
+  @constant IMAP_AUTHENTICATE_XOAUTH2 XOAUTH2 (OAuth 2.0 bearer token) authentication
   @constant IMAP_AUTHENTICATE_LOGIN LOGIN authentication
   @constant IMAP_AUTHORIZATION Special command so that we know we are in the authorization state.
   @constant IMAP_CAPABILITY The IMAP CAPABILITY command - see 6.1.1. CAPABILITY Command of RFC 3501.
@@ -75,6 +76,7 @@ typedef enum {
   IMAP_APPEND = 0x1,
   IMAP_AUTHENTICATE_CRAM_MD5,
   IMAP_AUTHENTICATE_LOGIN,
+  IMAP_AUTHENTICATE_XOAUTH2,
   IMAP_AUTHORIZATION,
   IMAP_CAPABILITY,
   IMAP_CLOSE,

@@ -1,0 +1,9 @@
+GNUSTEP_INSTALLATION_DOMAIN = SYSTEM
+
+# The logins are made by Pantomime itself, against servers in the test.
+t_XOAuth2_TOOL_LIBS += -lPantomime
+
+# clang 19 / binutils 2.44: a tool without constant strings of its own has no
+# __objc_constant_string section to take the bounds of.
+ADDITIONAL_LDFLAGS += -Wl,--defsym=__start___objc_constant_string=0 \
+                      -Wl,--defsym=__stop___objc_constant_string=0

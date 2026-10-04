@@ -431,6 +431,13 @@ static inline int has_literal(char *buf, unsigned c)
 		  [self _parseAUTHENTICATE_LOGIN];
 		  break;
 		}
+	      else if (_lastCommand == IMAP_AUTHENTICATE_XOAUTH2)
+		{
+		  // The server sends the reason of a refusal as a challenge; an
+		  // empty answer makes it finish the command with its NO.
+		  [self writeData: CRLF];
+		  break;
+		}
 	      else if (_currentQueueObject && _lastCommand == IMAP_LOGIN)
 		{
 		  //NSLog(@"writing password |%s|", [[_currentQueueObject->info objectForKey: @"Password"] cString]);
@@ -708,6 +715,22 @@ static inline int has_literal(char *buf, unsigned c)
   else if (theMechanism && [theMechanism caseInsensitiveCompare: @"LOGIN"] == NSOrderedSame)
     {
       [self sendCommand: IMAP_AUTHENTICATE_LOGIN  info: nil  arguments: @"AUTHENTICATE LOGIN"];
+      return;
+    }
+  else if (theMechanism && [theMechanism caseInsensitiveCompare: @"XOAUTH2"] == NSOrderedSame)
+    {
+      //
+      // The "password" is the OAuth 2.0 access token.  It goes with the
+      // command, as the initial response of the mechanism.
+      //
+      NSString *aResponse;
+
+      aResponse = [[NSString alloc] initWithData:
+		    [[[NSString stringWithFormat: @"user=%@\001auth=Bearer %@\001\001", theUsername, thePassword]
+		       dataUsingEncoding: NSUTF8StringEncoding] encodeBase64WithLineLength: 0]
+					encoding: NSASCIIStringEncoding];
+      [self sendCommand: IMAP_AUTHENTICATE_XOAUTH2  info: nil  arguments: @"AUTHENTICATE XOAUTH2 %@", aResponse];
+      RELEASE(aResponse);
       return;
     }
   
@@ -2346,6 +2369,7 @@ static inline int has_literal(char *buf, unsigned c)
 
     case IMAP_AUTHENTICATE_CRAM_MD5:
     case IMAP_AUTHENTICATE_LOGIN:
+    case IMAP_AUTHENTICATE_XOAUTH2:
     case IMAP_LOGIN:
       AUTHENTICATION_FAILED(_delegate, _mechanism);
       break;
@@ -2474,6 +2498,7 @@ static inline int has_literal(char *buf, unsigned c)
 
     case IMAP_AUTHENTICATE_CRAM_MD5:
     case IMAP_AUTHENTICATE_LOGIN:
+    case IMAP_AUTHENTICATE_XOAUTH2:
     case IMAP_LOGIN:
       if (_connection_state.reconnecting)
 	{

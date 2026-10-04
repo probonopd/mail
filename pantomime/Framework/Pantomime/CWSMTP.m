@@ -120,6 +120,7 @@ static inline CWInternetAddress *next_recipient(NSMutableArray *theRecipients, B
 - (void) _parseAUTH_LOGIN;
 - (void) _parseAUTH_LOGIN_CHALLENGE;
 - (void) _parseAUTH_PLAIN;
+- (void) _parseAUTH_XOAUTH2;
 - (void) _parseAUTHORIZATION;
 - (void) _parseDATA;
 - (void) _parseEHLO;
@@ -237,6 +238,21 @@ static inline CWInternetAddress *next_recipient(NSMutableArray *theRecipients, B
   else if ([theMechanism caseInsensitiveCompare: @"CRAM-MD5"] == NSOrderedSame)
     {
       [self sendCommand: SMTP_AUTH_CRAM_MD5  arguments: @"AUTH CRAM-MD5"];
+    }
+  else if ([theMechanism caseInsensitiveCompare: @"XOAUTH2"] == NSOrderedSame)
+    {
+      //
+      // The "password" is the OAuth 2.0 access token.  It goes with the
+      // command, as the initial response of the mechanism.
+      //
+      NSString *aResponse;
+
+      aResponse = [[NSString alloc] initWithData:
+		    [[[NSString stringWithFormat: @"user=%@\001auth=Bearer %@\001\001", theUsername, thePassword]
+		       dataUsingEncoding: NSUTF8StringEncoding] encodeBase64WithLineLength: 0]
+					encoding: NSASCIIStringEncoding];
+      [self sendCommand: SMTP_AUTH_XOAUTH2  arguments: @"AUTH XOAUTH2 %@", aResponse];
+      RELEASE(aResponse);
     }
   else
     {
@@ -647,6 +663,30 @@ static inline CWInternetAddress *next_recipient(NSMutableArray *theRecipients, B
     }
 }
 
+
+//
+// The server answers a refused token with a challenge that holds the reason;
+// an empty answer makes it finish the command with its error.
+//
+- (void) _parseAUTH_XOAUTH2
+{
+  NSData *aData;
+
+  aData = [_responsesFromServer lastObject];
+
+  if ([aData hasCPrefix: "334"])
+    {
+      [self writeData: CRLF];
+    }
+  else if ([aData hasCPrefix: "235"])
+    {
+      AUTHENTICATION_COMPLETED(_delegate, @"XOAUTH2");
+    }
+  else
+    {
+      AUTHENTICATION_FAILED(_delegate, @"XOAUTH2");
+    }
+}
 
 //
 //
@@ -1088,6 +1128,10 @@ static inline CWInternetAddress *next_recipient(NSMutableArray *theRecipients, B
 	  
 	case SMTP_AUTH_LOGIN_CHALLENGE:
 	  [self _parseAUTH_LOGIN_CHALLENGE];
+	  break;
+
+	case SMTP_AUTH_XOAUTH2:
+	  [self _parseAUTH_XOAUTH2];
 	  break;
 
 	case SMTP_AUTH_PLAIN:
