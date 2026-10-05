@@ -21,6 +21,7 @@
 ** along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#import "MailAppearance.h"
 #include "PasswordPanelController.h"
 
 #include "GNUMail.h"
@@ -38,6 +39,15 @@
   self = [super initWithWindowNibName: windowNibName];
 
   return self;
+}
+
+
+//
+//
+//
+- (void) windowDidLoad
+{
+  [MailAppearance styleWindow: [self window]];
 }
 
 

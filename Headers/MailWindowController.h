@@ -234,6 +234,7 @@
 @interface MailWindowController (Appearance)
 - (void) applyAppearance;
 - (void) layoutAppearance;
+- (void) _sizeSubjectColumn;
 @end
 
 

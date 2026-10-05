@@ -138,6 +138,45 @@ static NSMutableDictionary *toolbarImages = nil;
 					  (aStatusHeight - 16.0) / 2.0,
 					  16.0, 16.0)];
   [progressIndicator setAutoresizingMask: NSViewMinXMargin | NSViewMaxYMargin];
+
+  [self _sizeSubjectColumn];
+}
+
+
+//
+// The subject takes the width that the other columns leave, so that the list
+// is as wide as the window.
+//
+- (void) _sizeSubjectColumn
+{
+  NSArray *allColumns;
+  CGFloat anAvailableWidth, anOtherWidth;
+  NSUInteger i;
+
+  allColumns = [dataView tableColumns];
+
+  if (![allColumns containsObject: subjectColumn])
+    {
+      return;
+    }
+
+  anAvailableWidth = [[dataView enclosingScrollView] contentSize].width;
+  anOtherWidth = 0;
+
+  for (i = 0; i < [allColumns count]; i++)
+    {
+      NSTableColumn *aColumn;
+
+      aColumn = [allColumns objectAtIndex: i];
+
+      if (aColumn != subjectColumn)
+	{
+	  anOtherWidth += [aColumn width];
+	}
+    }
+
+  anOtherWidth += [dataView intercellSpacing].width * [allColumns count];
+  [subjectColumn setWidth: MAX([subjectColumn minWidth], anAvailableWidth - anOtherWidth)];
 }
 
 

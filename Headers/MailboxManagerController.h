@@ -160,3 +160,11 @@
 @end
 
 #endif // _GNUMail_H_MailboxManagerController
+
+
+//
+// The look of the window; see MailboxManagerController+Appearance.m.
+//
+@interface MailboxManagerController (Appearance)
+- (void) applyAppearance;
+@end

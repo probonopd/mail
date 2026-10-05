@@ -20,6 +20,7 @@
 ** along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#import "MailAppearance.h"
 #include "NewMailboxPanelController.h"
 
 #include "Constants.h"
@@ -40,6 +41,15 @@
   [[self window] setTitle: _(@"New Mailbox")];
 
   return self;
+}
+
+
+//
+//
+//
+- (void) windowDidLoad
+{
+  [MailAppearance styleWindow: [self window]];
 }
 
 

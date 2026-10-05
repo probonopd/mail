@@ -143,3 +143,12 @@
 @end
 
 #endif // _GNUMail_H_EditWindowController
+
+
+//
+// The look of the window; see EditWindowController+Appearance.m.
+//
+@interface EditWindowController (Appearance)
+- (void) applyAppearance;
+- (void) layoutAppearance;
+@end

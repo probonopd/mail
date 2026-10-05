@@ -20,6 +20,7 @@
 ** You should have received a copy of the GNU General Public License
 ** along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#import "MailAppearance.h"
 #import "MailboxInspectorPanelController.h"
 
 #import "MailboxInspectorPanel.h"
@@ -33,6 +34,8 @@ static MailboxInspectorPanelController *singleInstance = nil;
 //
 //
 //
+#define INSPECTOR_MIN_WIDTH 320.0
+
 @implementation MailboxInspectorPanelController
 
 - (id) initWithWindowNibName: (NSString *) windowNibName
@@ -71,6 +74,21 @@ static MailboxInspectorPanelController *singleInstance = nil;
   [[self window] setFrameUsingName: @"MailboxInspectorPanel"];
   
   return self;
+}
+
+
+//
+//
+//
+- (void) windowDidLoad
+{
+  [MailAppearance styleWindow: [self window]];
+
+  // Wide enough for its title.
+  if (NSWidth([[[self window] contentView] frame]) < INSPECTOR_MIN_WIDTH)
+    {
+      [[self window] setContentSize: NSMakeSize(INSPECTOR_MIN_WIDTH, NSHeight([[[self window] contentView] frame]))];
+    }
 }
 
 

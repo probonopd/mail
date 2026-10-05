@@ -21,6 +21,7 @@
 ** along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#import "MailAppearance.h"
 #import "FindWindowController.h"
 
 #import "GNUMail.h"
@@ -263,6 +264,8 @@ static FindWindowController *singleInstance = nil;
   _indexes = [[NSMutableArray alloc] init];
   _location = 0;  
   _folder = nil;
+
+  [MailAppearance styleWindow: [self window]];
 }
 
 

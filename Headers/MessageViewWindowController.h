@@ -122,3 +122,12 @@
 @end
 
 #endif // _GNUMail_H_MessageViewWindowController
+
+
+//
+// The look of the window; see MessageViewWindowController+Appearance.m.
+//
+@interface MessageViewWindowController (Appearance)
+- (void) applyAppearance;
+- (void) layoutAppearance;
+@end

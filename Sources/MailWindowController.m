@@ -1138,14 +1138,24 @@
     }
 
   // If it's a deleted message, we set the cell's text to italic
-  if ([theFlags contain: PantomimeDeleted])
+  if ([dataView isRowSelected: rowIndex])
+    {
+      // The highlight is a saturated blue; the text on it has to be light.
+      [theCell setTextColor: [NSColor whiteColor]];
+
+      if ([theFlags contain: PantomimeDeleted])
+	{
+	  [theCell setFont: [NSFont deletedMessageFont]];
+	}
+    }
+  else if ([theFlags contain: PantomimeDeleted])
     {
       [theCell setTextColor: [NSColor darkGrayColor]];
       [theCell setFont: [NSFont deletedMessageFont]];
     }
   else
     {
-      [theCell setTextColor: [NSColor blackColor]];
+      [theCell setTextColor: [NSColor controlTextColor]];
     }
 
   // We set the right aligment for our last (ie., Size) column.
@@ -2246,7 +2256,7 @@
 
   // We set any vertical mouse motion has being dragging
   [dataView setVerticalMotionCanBeginDrag: NO];
-  [dataView setRowHeight: [[NSFont seenMessageFont] defaultLineHeightForFont]];
+  [dataView setRowHeight: [[NSFont seenMessageFont] defaultLineHeightForFont] + 4.0];
 
   // We load the right set of columns
   [self _reloadTableColumns: self];
@@ -2822,7 +2832,7 @@
 //
 - (void) _fontValuesHaveChanged
 {
-  [dataView setRowHeight: [[NSFont seenMessageFont] defaultLineHeightForFont]];
+  [dataView setRowHeight: [[NSFont seenMessageFont] defaultLineHeightForFont] + 4.0];
   [self _showMessage: self];
 }
 

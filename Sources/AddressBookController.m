@@ -21,6 +21,7 @@
 **  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#import "MailAppearance.h"
 #import "AddressBookController.h"
 
 #import "AddressTaker.h"
@@ -208,6 +209,9 @@ static AddressBookController *singleInstance = nil;
   // We link our outlets
   //singlePropertyView = thePanel->singlePropertyView;
   //preferredEmailLabelPopUp = thePanel->prefLabelPopup;
+
+  // Before the saved frame is restored: that one has the size that was made here.
+  [MailAppearance styleWindow: window];
 
   // We finally set our autosave window frame name and restore the one from the user's defaults.
   [window setFrameAutosaveName: @"AddressBookPanel"];

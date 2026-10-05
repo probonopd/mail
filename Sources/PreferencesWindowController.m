@@ -19,6 +19,8 @@
 ** along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#import "AppearanceMetrics.h"
+#import "MailAppearance.h"
 #import "PreferencesWindowController.h"
 
 #import "ConsoleWindowController.h"
@@ -46,6 +48,9 @@ static PreferencesWindowController *singleInstance = nil;
 //
 //
 //
+#define PREFERENCES_ICON_WIDTH 72.0
+#define PREFERENCES_ICON_HEIGHT 62.0
+
 @implementation PreferencesWindowController
 
 - (id) initWithWindowNibName: (NSString *) windowNibName
@@ -99,6 +104,54 @@ static PreferencesWindowController *singleInstance = nil;
 {
   // We maintain an array of opened modules
   _allModules = [[NSMutableDictionary alloc] initWithCapacity: 10];
+
+  [MailAppearance styleWindow: [self window]];
+}
+
+
+//
+// The strip of icons that chooses the pane is shown whole, without a
+// scroller: the window is made as wide as the icons need.
+//
+- (void) _fitIconStrip
+{
+  NSRect aBoxFrame, aScrollFrame;
+  NSSize aContentSize;
+  CGFloat aMissingWidth, aStripHeight, aDelta;
+
+  // Room for the caption under each icon.
+  [matrix setCellSize: NSMakeSize(PREFERENCES_ICON_WIDTH, PREFERENCES_ICON_HEIGHT)];
+  [matrix sizeToCells];
+
+  aMissingWidth = NSWidth([matrix frame]) - [scrollView contentSize].width;
+
+  if (aMissingWidth != 0)
+    {
+      aContentSize = [[[self window] contentView] frame].size;
+      [[self window] setContentSize: NSMakeSize(aContentSize.width + aMissingWidth, aContentSize.height)];
+    }
+
+  [scrollView setHasHorizontalScroller: NO];
+
+  // What the scroller took above the box goes to the box.
+  aStripHeight = NSHeight([matrix frame]) + 2;
+  aScrollFrame = [scrollView frame];
+  aDelta = NSHeight(aScrollFrame) - aStripHeight;
+
+  // The pane below is as wide as the strip.
+  aBoxFrame = [box frame];
+  aBoxFrame.size.width = NSWidth(aScrollFrame);
+  [box setFrame: aBoxFrame];
+
+  if (aDelta > 0)
+    {
+      aBoxFrame = [box frame];
+      aScrollFrame.origin.y += aDelta;
+      aScrollFrame.size.height = aStripHeight;
+      aBoxFrame.size.height += aDelta;
+      [scrollView setFrame: aScrollFrame];
+      [box setFrame: aBoxFrame];
+    }
 }
 
 
@@ -277,12 +330,18 @@ static PreferencesWindowController *singleInstance = nil;
 	  NSButtonCell *aButtonCell;
 	  int column;
 
+	  // We get our Preferences module and we add it to our matrix.
+	  aModule = (id<PreferencesModule>)[aBundle preferencesModule];
+
+	  // A bundle that is installed twice must not show twice.
+	  if ([_allModules objectForKey: [aModule name]])
+	    {
+	      continue;
+	    }
+
 	  // We add our column
 	  [matrix addColumn];
 	  column = ([matrix numberOfColumns] - 1);
-
-	  // We get our Preferences module and we add it to our matrix.
-	  aModule = (id<PreferencesModule>)[aBundle preferencesModule];
 
 	  [_allModules setObject: aModule  forKey: [aModule name]];
 	  
@@ -291,13 +350,15 @@ static PreferencesWindowController *singleInstance = nil;
 	  
 	  [aButtonCell setTag: column];
 	  [aButtonCell setTitle: [aModule name]];
-	  [aButtonCell setFont: [NSFont systemFontOfSize: 8]];
+	  [aButtonCell setFont: METRICS_FONT_SYSTEM_REGULAR_11];
 	  [aButtonCell setImage: [aModule image]];
 	}
     }
 
   [matrix sizeToCells];
   [matrix setNeedsDisplay: YES];
+
+  [self _fitIconStrip];
 }
 
 
@@ -386,7 +447,7 @@ static PreferencesWindowController *singleInstance = nil;
   aButtonCell = [matrix cellAtRow: 0  column: theIndex];
   [aButtonCell setTag: theIndex];
   [aButtonCell setTitle: [aModule name]];
-  [aButtonCell setFont: [NSFont systemFontOfSize: 8]];
+  [aButtonCell setFont: METRICS_FONT_SYSTEM_REGULAR_11];
   [aButtonCell setImage: [aModule image]];
 }
 

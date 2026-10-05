@@ -795,6 +795,8 @@
 
   // We add our window from our list of opened windows
   [GNUMail addEditWindow: [self window]];
+
+  [self applyAppearance];
 }
 
 
@@ -1446,6 +1448,8 @@
     [bccLabel setHidden:YES];
     [bccText setHidden:YES];
   }
+
+  [self layoutAppearance];
 }
 
 

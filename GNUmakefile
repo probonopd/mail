@@ -59,6 +59,10 @@ Mail_OBJC_FILES = \
 	Sources/GSProgressIndicator.m \
 	Sources/GmailOAuth.m \
 	Sources/MailWindowController+Appearance.m \
+	Sources/MailAppearance.m \
+	Sources/MessageViewWindowController+Appearance.m \
+	Sources/EditWindowController+Appearance.m \
+	Sources/MailboxManagerController+Appearance.m \
 	Sources/GmailAccountSetup.m \
 	Sources/AboutPanelController.m \
 	Sources/AddressBookController.m \

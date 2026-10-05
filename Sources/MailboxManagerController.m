@@ -900,6 +900,8 @@ static MailboxManagerController *singleInstance = nil;
     selector: @selector(_folderUnsubscribeCompleted:)
     name: PantomimeFolderUnsubscribeCompleted
     object: nil];
+
+  [self applyAppearance];
 }
 
 

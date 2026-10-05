@@ -549,6 +549,8 @@
 
   // We set the last window on top
   [GNUMail setLastMailWindowOnTop: [self window]]; 
+
+  [self applyAppearance];
 }
 
 

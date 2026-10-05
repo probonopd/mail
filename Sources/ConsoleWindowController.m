@@ -21,6 +21,7 @@
 ** along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#import "MailAppearance.h"
 #import "ConsoleWindowController.h"
 
 #import "Constants.h"
@@ -535,6 +536,8 @@ static NSImage *stop = nil;
   [tasksTableView setAction: @selector(clickedOnTableView:)];
   [tasksTableView reloadData];
   [messagesTableView reloadData];
+
+  [MailAppearance styleWindow: [self window]];
 }
 
 
