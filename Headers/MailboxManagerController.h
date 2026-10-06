@@ -167,4 +167,5 @@
 //
 @interface MailboxManagerController (Appearance)
 - (void) applyAppearance;
+- (void) toggleDrawer;
 @end

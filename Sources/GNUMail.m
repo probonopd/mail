@@ -1654,7 +1654,7 @@ static BOOL doneInit = NO;
 //
 - (IBAction) showMailboxManager: (id) sender
 {
-  TOGGLE_WINDOW(MailboxManagerController);
+  [[MailboxManagerController singleInstance] toggleDrawer];
 }
 
 
